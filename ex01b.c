@@ -48,12 +48,10 @@ int calculate_waiting_time(struct process p[], int n)
       }
     }
   }
+  p[0].wait=0;
   for (i = 0; i < n; i++)
   {
-    if (i == 0)
-      p[i].wait = 0;
-    else
-      p[i].wait = p[i - 1].wait + p[i - 1].burst;
+    p[i].wait = p[i - 1].wait + p[i - 1].burst;
     total += p[i].wait;
   }
   return total;
