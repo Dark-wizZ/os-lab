@@ -4,13 +4,10 @@
 void main()
 {
   int i, sum = 0, n, st;
-  int a[20], b[20], dd[20];
+  int a[20], dd[20];
   clrscr();
-  do
-  {
-    printf("\nEnter the block number between 0 and 200: ");
-    scanf("%d", &st);
-  } while ((st >= 200) || (st < 0));
+  printf("\nEnter the block number between 0 and 200: ");
+  scanf("%d", &st);
   printf("\nOur disk head is on the %d block", st);
   a[0] = st;
   printf("\nEnter the no. of request: ");
@@ -20,13 +17,6 @@ void main()
   {
     printf("\nEnter %d request: ", i);
     scanf("%d", &a[i]);
-    do
-    {
-      if ((a[i] > 200) || (a[i] < 0))
-      {
-        printf("\nBlock number must be between 0 and 200!");
-      }
-    } while ((a[i] > 200) || (a[i] < 0));
   }
   for (i = 0; i <= n; i++)
     dd[i] = a[i];

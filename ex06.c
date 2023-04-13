@@ -1,11 +1,9 @@
 #include <stdio.h>
-#include <conio.h>
 void main()
 {
   int allocated[15][15], max[15][15], need[15][15], avail[15], tres[15], work[15], flag[15];
   int pno, rno, i, j, prc, count, t, total;
   count = 0;
-  clrscr();
   printf("\n Enter number of process:");
   scanf("%d", &pno);
   printf("\n Enter number of resources:");
@@ -109,5 +107,4 @@ void main()
     printf("\nThe system is in a Safe State!!");
   else
     printf("\nThe system is in an Unsafe State!!");
-  getch();
 }

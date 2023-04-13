@@ -1,76 +1,63 @@
 #include <stdio.h>
 #include <conio.h>
+
 void main()
 {
   int allocated[15][15], max[15][15], need[15][15], avail[15], tres[15], work[15], flag[15];
-  int pno, rno, i, j, prc, count, t, total;
+  int pno, rno, i, j, prc, count, total;
   count = 0;
   clrscr();
-  printf("\n Enter number of process:");
+  printf("\nEnter number of process: ");
   scanf("%d", &pno);
-  printf("\n Enter number of resources:");
+  printf("\nEnter number of resources: ");
   scanf("%d", &rno);
   for (i = 1; i <= pno; i++)
-  {
     flag[i] = 0;
-  }
-  printf("\n Enter total numbers of each resources:");
+  printf("\nEnter total numbers of each resource: ");
   for (i = 1; i <= rno; i++)
     scanf("%d", &tres[i]);
-  printf("\n Enter Max resources for each process:");
+  printf("\nEnter Max resources for each process:\n");
   for (i = 1; i <= pno; i++)
   {
-    printf("\n for process %d:", i);
+    printf("For process %d: ", i);
     for (j = 1; j <= rno; j++)
       scanf("%d", &max[i][j]);
   }
-  printf("\n Enter allocated resources for each process:");
+  printf("\nEnter allocated resources for each process:\n");
   for (i = 1; i <= pno; i++)
   {
-    printf("\n for process %d:", i);
+    printf("For process %d: ", i);
     for (j = 1; j <= rno; j++)
       scanf("%d", &allocated[i][j]);
   }
-  printf("\n available resources:\n");
+  printf("\nAvailable resources:\n");
   for (j = 1; j <= rno; j++)
   {
     avail[j] = 0;
     total = 0;
     for (i = 1; i <= pno; i++)
-    {
       total += allocated[i][j];
-    }
     avail[j] = tres[j] - total;
     work[j] = avail[j];
-    printf(" %d \t", work[j]);
+    printf("%d ", work[j]);
   }
   do
   {
     for (i = 1; i <= pno; i++)
-    {
       for (j = 1; j <= rno; j++)
-      {
         need[i][j] = max[i][j] - allocated[i][j];
-      }
-    }
-    printf("\n Allocated matrix Max need");
+    printf("\n\nAllocated\tMax\t\tNeed\n");
     for (i = 1; i <= pno; i++)
     {
+      for (j = 1; j <= rno; j++)
+        printf("%d ", allocated[i][j]);
+      printf("\t\t");
+      for (j = 1; j <= rno; j++)
+        printf("%d ", max[i][j]);
+      printf("\t\t");
+      for (j = 1; j <= rno; j++)
+        printf("%d ", need[i][j]);
       printf("\n");
-      for (j = 1; j <= rno; j++)
-      {
-        printf("%4d", allocated[i][j]);
-      }
-      printf("|");
-      for (j = 1; j <= rno; j++)
-      {
-        printf("%4d", max[i][j]);
-      }
-      printf("|");
-      for (j = 1; j <= rno; j++)
-      {
-        printf("%4d", need[i][j]);
-      }
     }
     prc = 0;
     for (i = 1; i <= pno; i++)
@@ -79,35 +66,32 @@ void main()
       {
         prc = i;
         for (j = 1; j <= rno; j++)
-        {
           if (work[j] < need[i][j])
           {
             prc = 0;
             break;
           }
-        }
       }
       if (prc != 0)
         break;
     }
     if (prc != 0)
     {
-      printf("\n Process %d completed", i);
+      printf("\nProcess %d completed", i);
       count++;
-      printf("\n Available Resources:");
+      printf("\nAvailable Resources:");
       for (j = 1; j <= rno; j++)
       {
         work[j] += allocated[prc][j];
-        allocated[prc][j] = 0;
-        max[prc][j] = 0;
-        flag[prc] = 1;
-        printf(" %d", work[j]);
+        allocated[prc][j] += allocated[prc][j];
+        printf("%d ", work[j]);
       }
+      flag[prc] = 1;
     }
   } while (count != pno && prc != 0);
   if (count == pno)
-    printf("\nThe system is in a Safe State!!");
+    printf("\n\nSystem is in safe state");
   else
-    printf("\nThe system is in an Unsafe State!!");
+    printf("\n\nSystem is in unsafe state");
   getch();
 }
