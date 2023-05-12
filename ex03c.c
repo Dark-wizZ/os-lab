@@ -1,69 +1,43 @@
 #include <stdio.h>
-#include <conio.h>
-int next = 0, f1, p, c, l, sum;
-int asize[30], fsize[30], f1size[30], bsize[30];
-void main()
-{
-  char ch;
-  int blsize, i, k;
-  void worst_fit(int);
-  clrscr();
-  printf("\nEnter the number of free block: ");
-  scanf("%d", &f1);
-  sum = 50;
-  printf("\nEnter within the width 480.");
-  printf("\nEnter width within the limit.\n");
-  for (i = 0; i < f1; i++)
-  {
-    printf("Enter the size of the block%d: ", i);
-    scanf("%d", &fsize[i]);
-    if (fsize[i] > 481)
-    {
-      printf("\nExceeding the limit, re-enter the value!");
-      continue;
-    }
-    f1size[i] = fsize[i];
-    asize[i] = 0;
-    sum = sum + fsize[i];
+
+int nb, np, b[100], p[100];
+int i, j;
+
+void getData(){
+  printf("\nEnter the number of free blocks: ");
+  scanf("%d", &nb);
+  printf("\nEnter the size of each block(within 480):");
+  for(i=0; i<nb; i++){
+    printf("\nBlock %d: ",i+1);
+    scanf("%d", &b[i]);
   }
-  printf("\nEnter the number of process: ");
-  scanf("%d", &p);
-  for (i = 0; i < p; i++)
-  {
-    printf("Enter the size of allocated memory process%d: ", i);
-    scanf("%d", &bsize[i]);
+  printf("\nEnter the number of processes: ");
+  scanf("%d", &np);
+  printf("\nEnter the size of allocated memory of each process: ");
+  for(i=0; i<np; i++){
+    printf("\nProcess %d: ", i+1);
+    scanf("%d", &p[i]);
   }
-  for (i = 0; i < p; i++)
-    worst_fit(bsize[i]);
-  getch();
 }
-void worst_fit(int n)
-{
-  int l, s, k = 0, i, s1;
-  int max1 = 0;
-  for (i = 0; i < f1; i++)
-  {
-    if ((fsize[i] - n) > 0)
-    {
-      s = fsize[i] - n;
-      if (s >= max1)
-      {
-        max1 = s;
-        k = i + 1;
+void worstFit(){
+  int ind, max, diff, flag;
+  for(i=0; i<np; i++){
+    ind=0; max=-1; flag=1;
+    for(j=0; j<nb; j++){
+      diff = b[j]-p[i];
+      if(diff>=0 && diff>max){
+        b[j] -= p[i];
+        flag=0; ind=j; max=diff;
       }
     }
+    if(max==-1){
+      printf("\nNo memory block for process %d.",i+1);
+    }else{
+      printf("\nMemory allocated for process %d in block %d.",i+1, ind+1);
+    }
   }
-  if (k != 0)
-  {
-    next = k;
-    fsize[k - 1] = max1;
-    asize[k - 1] = asize[k - 1] + n;
-    s1 = 50;
-    for (l = 0; l < k - 1; l++)
-      s1 += fsize[l] + asize[l];
-    printf("\n\nMemory allocated in block:%d", (k - 1));
-    printf("\nMemory allocated for process:%d", asize[l]);
-  }
-  else
-    printf("\n\nNo matching block for %d", n);
+}
+void main(){
+  getData();
+  worstFit();
 }

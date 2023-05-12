@@ -1,110 +1,114 @@
 #include <stdio.h>
-void main()
+
+struct process
 {
-  int allocated[15][15], max[15][15], need[15][15], avail[15], tres[15], work[15], flag[15];
-  int pno, rno, i, j, prc, count, t, total;
-  count = 0;
-  printf("\n Enter number of process:");
-  scanf("%d", &pno);
-  printf("\n Enter number of resources:");
-  scanf("%d", &rno);
-  for (i = 1; i <= pno; i++)
-  {
-    flag[i] = 0;
+  int max[20],alloc[20],need[20];
+  int comp;
+};
+
+int np, nr, ares[20];
+int i,j;
+struct process p[20];
+
+void getData(){
+  for(i=0; i<np; i++) p[i].comp=0;
+  printf("\nEnter the number of processes: ");
+  scanf("%d",&np);
+  printf("\nEnter the number of resources: ");
+  scanf("%d",&nr);
+  printf("\nEnter the total number of each resources: ");
+  for(i=0; i<nr; i++){
+    scanf("%d",&ares[i]);
   }
-  printf("\n Enter total numbers of each resources:");
-  for (i = 1; i <= rno; i++)
-    scanf("%d", &tres[i]);
-  printf("\n Enter Max resources for each process:");
-  for (i = 1; i <= pno; i++)
-  {
-    printf("\n for process %d:", i);
-    for (j = 1; j <= rno; j++)
-      scanf("%d", &max[i][j]);
-  }
-  printf("\n Enter allocated resources for each process:");
-  for (i = 1; i <= pno; i++)
-  {
-    printf("\n for process %d:", i);
-    for (j = 1; j <= rno; j++)
-      scanf("%d", &allocated[i][j]);
-  }
-  printf("\n available resources:\n");
-  for (j = 1; j <= rno; j++)
-  {
-    avail[j] = 0;
-    total = 0;
-    for (i = 1; i <= pno; i++)
-    {
-      total += allocated[i][j];
+  printf("\nEnter the max resources for each process: ");
+  for(i=0; i<np; i++){
+    printf("\nfor process %d: ",i+1);
+    for(j=0; j<nr; j++){
+      scanf("%d",&p[i].max[j]);
     }
-    avail[j] = tres[j] - total;
-    work[j] = avail[j];
-    printf(" %d \t", work[j]);
   }
-  do
-  {
-    for (i = 1; i <= pno; i++)
-    {
-      for (j = 1; j <= rno; j++)
-      {
-        need[i][j] = max[i][j] - allocated[i][j];
-      }
+  printf("\nEnter the allocated resources for each process: ");
+  for(i=0; i<np; i++){
+    printf("\nfor process %d: ",i+1);
+    for(j=0; j<nr; j++){
+      scanf("%d",&p[i].alloc[j]);
     }
-    printf("\n Allocated matrix Max need");
-    for (i = 1; i <= pno; i++)
-    {
-      printf("\n");
-      for (j = 1; j <= rno; j++)
-      {
-        printf("%4d", allocated[i][j]);
-      }
-      printf("|");
-      for (j = 1; j <= rno; j++)
-      {
-        printf("%4d", max[i][j]);
-      }
-      printf("|");
-      for (j = 1; j <= rno; j++)
-      {
-        printf("%4d", need[i][j]);
-      }
+  }
+}
+void calcNeed(){
+  for(i=0; i<np; i++){
+    for(j=0; j<nr; j++){
+      p[i].need[j] = p[i].max[j] - p[i].alloc[j];
     }
-    prc = 0;
-    for (i = 1; i <= pno; i++)
-    {
-      if (flag[i] == 0)
-      {
-        prc = i;
-        for (j = 1; j <= rno; j++)
-        {
-          if (work[j] < need[i][j])
-          {
-            prc = 0;
-            break;
-          }
+  }
+}
+void calcAres(){
+  for(i=0; i<nr; i++){
+    for(j=0; j<np; j++){
+      ares[i] -= p[j].alloc[i];
+    }
+  }
+}
+void printAres(){
+  printf("\nAvailable resources: ");
+  for(i=0; i<nr; i++){
+    printf("%d ",ares[i]);
+  }
+}
+void printStat(){
+  printf("\nAllocated\tMax\tNeed");
+  for(i=0;i<np;i++){
+    printf("\n");
+    for(j=0;j<nr;j++){
+      printf("%d ",p[i].alloc[j]);
+    }
+    printf("\t");
+    for(j=0;j<nr;j++){
+      printf("%d ",p[i].max[j]);
+    }
+    printf("\t");
+    for(j=0; j<nr; j++){
+      printf("%d ",p[i].need[j]);
+    }
+  }
+}
+void freePros(int pi){
+  p[i].comp=1;
+  for(i=0; i<nr; i++){
+    ares[i] += p[pi].alloc[i];
+    p[pi].alloc[i]=p[pi].max[i]=p[pi].need[i]=0;
+  }
+}
+void  process(){
+  int flag, k;
+  for(k=0; k<np; k++){
+    printAres();
+    printStat();
+    for(i=0; i<np; i++){
+      flag=1;
+      if(p[i].comp) continue;
+      for(j=0; j<nr; j++){
+        if(p[i].need[j]>ares[j]){
+          flag=0;
         }
       }
-      if (prc != 0)
+      if(flag){
+        printf("\nProcess %d completed.",i+1);
+        freePros(i);
         break;
-    }
-    if (prc != 0)
-    {
-      printf("\n Process %d completed", i);
-      count++;
-      printf("\n Available Resources:");
-      for (j = 1; j <= rno; j++)
-      {
-        work[j] += allocated[prc][j];
-        allocated[prc][j] = 0;
-        max[prc][j] = 0;
-        flag[prc] = 1;
-        printf(" %d", work[j]);
       }
     }
-  } while (count != pno && prc != 0);
-  if (count == pno)
-    printf("\nThe system is in a Safe State!!");
-  else
-    printf("\nThe system is in an Unsafe State!!");
+    if(!flag){
+      printf("\nThis system is in unsafe condition! ");
+      return;
+    }
+  }
+  printf("\nThis system is in Safe condition. ");
 }
+void main(){
+  getData();
+  calcNeed();
+  calcAres();
+  process();
+}
+

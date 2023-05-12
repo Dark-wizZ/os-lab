@@ -1,10 +1,10 @@
 clear
-echo enter the year
-read year
-r=`expr $year % 4`
-if [ $r -eq 0 ]
+echo Enter the year
+read y
+x=$(($y%4))
+if [ $x -eq 0 ]
 then
-echo $year is leap year
+	echo $y is a leap year
 else
-echo $year is not leap year
+	echo $y is not a leap year
 fi

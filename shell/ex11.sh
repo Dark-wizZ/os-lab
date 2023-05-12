@@ -1,26 +1,26 @@
 clear
 fact(){
-s=1
-c=1
-while [ $c -le $x ]
-do
-s=`expr $s \* $c`
-c=`expr $c \+ 1`
-done
+	f=1
+	while [ $x -gt 0 ]
+	do
+		f=$(($f*$x))
+		x=$(($x-1))
+	done
 }
-echo enter the N value
+echo enter n value
 read n
-echo enter the R value
+echo enter r value
 read r
 x=$n
 fact
-nf=$s
+nf=$f
 x=$r
 fact
-rf=$s
-x=`expr $n \- $r`
+rf=$f
+nr=$(($n-$r))
+x=$nr
 fact
-nrf=$s
-res=`expr $rf \* $nrf`
-res=`expr $nf \/ $res`
-echo result = $res
+nrf=$f
+res=$(($rf*$nrf))
+res=$(($nf/$res))
+echo the combo is $res

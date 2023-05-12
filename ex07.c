@@ -1,117 +1,89 @@
 #include <stdio.h>
-#include <conio.h>
-#include <string.h>
-char state[10];
-void pickup(int);
-void test(int);
-void putdown(int);
-void print_status();
-char pname[10][10];
-char hun[10];
-int no_phil, max_eater;
-void main()
-{
-  int i, j, k, n, pos, no_eat, round = 1;
-  char c;
-  clrscr();
-  printf("\nEnter number of philosophers: ");
-  scanf("%d", &no_phil);
-  max_eater = no_phil / 2;
-  printf("\n%d philosophers can eat at a time to avoid deadlock.", max_eater);
-  printf("\nEnter %d philosopher's names one by one: ", no_phil);
-  for (i = 0; i < no_phil; i++)
-  {
-    scanf("%s", pname[i]);
+
+struct phil{
+  char state, name;
+};
+
+int i,j,np,max, c=0;
+struct phil p[20];
+char ch;
+
+void getData(){
+  printf("\nEnter number of philosopher: ");
+  scanf("%d",&np);
+  max = np/2;
+  printf("\n%d philosopher can eat at a time to avoid deadlock.",max);
+  printf("\nEnter %d philosphers name: ",np);
+  for(i=0; i<np; i++){
+    printf("\nposition %d: ",i);
+    scanf(" %c",&p[i].name);
+    p[i].state='t';
   }
-  for (i = 0; i < no_phil; i++)
-    state[i] = 't';
-  for (i = 0; i < no_phil; i++)
-  {
-    printf("\nposition %d:%s", i, pname[i]);
+}
+int pindex(char name){
+  for(i=0; i<np; i++) if(p[i].name==name) return i;
+}
+int canEat(char name){
+  int index = pindex(name);
+  int left = (index-1<0)? np-1: index-1;
+  int right = (index+1>=np)? 0 : index+1;
+  if(p[left].state=='e' || p[right].state=='e') return 0;
+  return 1;
+}
+void printStat(){
+  printf("\nCURRENT STATUS:");
+  printf("\nPhilosopher\tState");
+  for(i=0; i<np; i++){
+    printf("\n%c\t\t%c",p[i].name,p[i].state);
   }
-  getch();
-  while (1)
-  {
-    clrscr();
-    printf("\nROUND%d", round);
-    printf("\n-------");
-    printf("\nstatus: ");
-    print_status();
-    no_eat = 0;
-    for (j = 0; j < no_phil; j++)
-    {
-      if (state[j] == 'h')
-      {
-        pickup(j);
-        if (state[j] == 'e')
-          no_eat++;
-      }
+}
+void grandEat(char hp){
+    if(canEat(hp)){
+      p[pindex(hp)].state='e';
+      c++;
+      printf("\nHungry philosopher %c is granted to eat.",hp);
+    }else{
+      p[pindex(hp)].state='h';
+      printf("\n%c must wait since her neighour is eating",hp);
     }
-    printf("\nEnter %d philosophers who wants to eat: ", (max_eater - no_eat));
-    for (i = 0; i < (max_eater - no_eat); i++)
-    {
-    lab:
-      printf("\n\nEnter hungry philosopher%d: ", (i + 1));
-      scanf("%s", hun);
-      for (j = 0; j < no_phil; j++)
-      {
-        k = strcmp(pname[j], hun);
-        if (k == 0)
-        {
-          pos = j;
-          break;
-        }
-      }
-      pickup(pos);
-      if (state[pos] == 'h')
-        goto lab;
+}
+void prompt(){
+  char hp;
+  printf("\nEnter %d philosophers who wants to eat",max-c);
+  while(c<max){
+    printf("\nEnter hungry philosopher %d: ",c+1);
+    scanf(" %c",&hp);
+    grandEat(hp);
+  }
+}
+void refresh(){
+  c=0;
+  for(i=0; i<np; i++){
+    if(p[i].state!='h'){
+      p[i].state='t';
     }
-    getch();
-    clrscr();
-    printf("\nCurrent status: ");
-    print_status();
-    for (j = 0; j < no_phil; j++)
-    {
-      if (state[j] == 'e')
-      {
-        putdown(j);
-      }
+  }
+}
+void autoEat(){
+  for(i=0; i<np; i++){
+    if(p[i].state=='h'){
+      grandEat(p[i].name);
     }
-    printf("\nDo you want to continue?(y/n): ");
-    c = getch();
-    if (c == 'n' || c == 'N')
-      break;
-    else
-      round++;
-  }
-  getch();
-}
-void pickup(int i)
-{
-  state[i] = 'h';
-  test(i);
-}
-void print_status()
-{
-  int i;
-  printf("\nPHILOSOPHER\tSTATE");
-  for (i = 0; i < no_phil; i++)
-  {
-    printf("\n%s\t\t%c", pname[i], state[i]);
   }
 }
-void test(int i)
-{
-  if ((state[(i + (no_phil - 1)) % no_phil] != 'e') && (state[i] == 'h') && (state[(i + 1) % no_phil] != 'e'))
-  {
-    state[i] = 'e';
+void main(){
+  getData();
+  printStat();
+  prompt();
+  printStat();
+  while(1){
+    printf("\nDo you want to continue?(y/n) ");
+    scanf(" %c",&ch);
+    if(ch=='n') break;
+    refresh();
+    printStat();
+    autoEat();
+    prompt();
+    printStat();
   }
-  if (state[i] != 'e')
-    printf("\n%s must wait since her neighbour is eating", pname[i]);
-  else if (state[i] == 'e')
-    printf("\nHungry philosopher %s is granted to eat", pname[i]);
-}
-void putdown(int i)
-{
-  state[i] = 't';
 }

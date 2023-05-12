@@ -1,36 +1,40 @@
 #include <stdio.h>
-#include <conio.h>
 #include <math.h>
-void main()
-{
-  int i, sum = 0, n, st;
-  int a[20], dd[20];
-  clrscr();
-  printf("\nEnter the block number between 0 and 200: ");
-  scanf("%d", &st);
-  printf("\nOur disk head is on the %d block", st);
-  a[0] = st;
-  printf("\nEnter the no. of request: ");
-  scanf("%d", &n);
-  printf("\nEnter request: ");
-  for (i = 1; i <= n; i++)
-  {
-    printf("\nEnter %d request: ", i);
-    scanf("%d", &a[i]);
+#include <stdlib.h>
+
+int np, i, d[100], init, total;
+
+void getRequest(){
+  printf("\nEnter the initial position of the head: ");
+  scanf("%d",&init);
+  printf("\nNow the head is in %d block",init);
+  printf("\nEnter the number of requests: ");
+  scanf("%d",&np);
+  d[0]=init;
+  for(i=1; i<=np; i++){
+    printf("\nEnter %d request: ",i);
+    scanf("%d",&d[i]);
   }
-  for (i = 0; i <= n; i++)
-    dd[i] = a[i];
-  printf("\n\t\tFIRST COME FIRST SERVE: ");
-  printf("\nDISK QUEUE:");
-  for (i = 0; i <= n; i++)
-    printf("\t%d", a[i]);
-  printf("\n\nACCESS ORDER:");
-  for (i = 0; i <= n; i++)
-  {
-    printf("\t%d", dd[i]);
-    if (i != n)
-      sum += abs(dd[i] - dd[i + 1]);
+}
+void calcHeadMove(){
+  for(i=0; i<np; i++){
+    total+= abs(d[i]-d[i+1]);
   }
-  printf("\n\nTotal no. of head movements: %d", sum);
-  getch();
+}
+void printStat(){
+  printf("\nFIRST COME FIRST SERVE: ");
+  printf("\nDisk Queue: ");
+  for(i=0; i<np; i++){
+    printf("\t%d",d[i]);
+  }
+  printf("\nAccess Order: ");
+  for(i=0; i<np; i++){
+    printf("\t%d",d[i]);
+  }
+  printf("\nTotal number of head movements: %d",total);
+}
+void main(){
+  getRequest();
+  calcHeadMove();
+  printStat();
 }
